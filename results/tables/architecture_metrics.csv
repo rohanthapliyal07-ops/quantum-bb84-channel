@@ -1,0 +1,3 @@
+Processor,Physical Qubits,Circuit Depth,Gate Count,CX Gate Count,SWAP Gate Count,GHZ Correlated Output (%)
+Processor A,5,11,15,7,0,93.06640625
+Processor B,7,11,15,7,0,85.64453125
