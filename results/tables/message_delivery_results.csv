@@ -1,0 +1,3 @@
+processor,message_characters,message_bytes,ciphertext_bytes,encryption,key_length_bits,qber,delivery_success,authentication_success,key_confirmation,error
+Processor A,22,22,38,AES-256-GCM,256,0.009136212624584718,True,True,True,
+Processor B,22,22,38,AES-256-GCM,256,0.01623931623931624,True,True,True,

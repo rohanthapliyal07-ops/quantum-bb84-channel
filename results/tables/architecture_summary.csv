@@ -1,0 +1,3 @@
+processor,backend_name,available_qubits,batch_capacity,message_bits,comparison_bits,comparison_trials,circuit_type,two_qubit_operations_expected,architecture_note
+Processor A,Processor A,5,5,12000,10000,3,Independent single-qubit BB84,0,Independent single-qubit circuits. This experiment does not benchmark entangling gates or multi-qubit connectivity.
+Processor B,Processor B,7,7,12000,10000,3,Independent single-qubit BB84,0,Independent single-qubit circuits. This experiment does not benchmark entangling gates or multi-qubit connectivity.

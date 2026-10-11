@@ -1,0 +1,3 @@
+processor,qubits,qber,sifted_bits,sample_size,remaining_bits,corrected_errors,leakage_bits,estimated_key_length,final_key_length,batch_count,average_circuit_depth,execution_time_seconds
+Processor A,5,0.009136212624584718,6023,1204,4819,52,52,3916,256,2400,3.9166666666666665,2.151410399999804
+Processor B,7,0.01623931623931624,5853,1170,4683,107,107,3326,256,1715,3.983673469387755,1.975536899999497
