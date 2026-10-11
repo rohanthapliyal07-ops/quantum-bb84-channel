@@ -1,0 +1,164 @@
+{
+    "project": "Quantum Secure Channel",
+    "protocol": "BB84",
+    "privacy_amplification": "Toeplitz Hashing",
+    "encryption": "AES-256-GCM",
+    "authentication_demonstration": "HMAC-SHA256",
+    "processors": {
+        "Processor A": {
+            "backend": "Processor A",
+            "qubits": 5
+        },
+        "Processor B": {
+            "backend": "Processor B",
+            "qubits": 7
+        }
+    },
+    "configuration": {
+        "message_bits": 12000,
+        "comparison_bits": 10000,
+        "comparison_trials": 3,
+        "test_fraction": 0.2,
+        "qber_abort_threshold": 0.11,
+        "aes_key_bits": 256
+    },
+    "message_delivery": [
+        {
+            "processor": "Processor A",
+            "message_characters": 22,
+            "message_bytes": 22,
+            "ciphertext_bytes": 38,
+            "encryption": "AES-256-GCM",
+            "key_length_bits": 256,
+            "qber": 0.009136212624584718,
+            "delivery_success": true,
+            "authentication_success": true,
+            "key_confirmation": true,
+            "error": null
+        },
+        {
+            "processor": "Processor B",
+            "message_characters": 22,
+            "message_bytes": 22,
+            "ciphertext_bytes": 38,
+            "encryption": "AES-256-GCM",
+            "key_length_bits": 256,
+            "qber": 0.01623931623931624,
+            "delivery_success": true,
+            "authentication_success": true,
+            "key_confirmation": true,
+            "error": null
+        }
+    ],
+    "message_sessions": [
+        {
+            "processor": "Processor A",
+            "qubits": 5,
+            "qber": 0.009136212624584718,
+            "sifted_bits": 6023,
+            "sample_size": 1204,
+            "remaining_bits": 4819,
+            "corrected_errors": 52,
+            "leakage_bits": 52,
+            "estimated_key_length": 3916,
+            "final_key_length": 256,
+            "batch_count": 2400,
+            "average_circuit_depth": 3.9166666666666665,
+            "execution_time_seconds": 2.151410399999804
+        },
+        {
+            "processor": "Processor B",
+            "qubits": 7,
+            "qber": 0.01623931623931624,
+            "sifted_bits": 5853,
+            "sample_size": 1170,
+            "remaining_bits": 4683,
+            "corrected_errors": 107,
+            "leakage_bits": 107,
+            "estimated_key_length": 3326,
+            "final_key_length": 256,
+            "batch_count": 1715,
+            "average_circuit_depth": 3.983673469387755,
+            "execution_time_seconds": 1.975536899999497
+        }
+    ],
+    "comparison_summary": [
+        {
+            "processor": "Processor A",
+            "noise_mode": "Controlled Noise",
+            "qber": 0.02252605338355042,
+            "sifted_bits": 5026.666666666667,
+            "corrected_errors": 76.66666666666667,
+            "estimated_key_length": 2568.0,
+            "final_key_length": 256.0,
+            "batch_count": 2000.0,
+            "average_circuit_depth": 3.9401666666666664,
+            "one_qubit_gate_count": 17439.666666666668,
+            "two_qubit_gate_count": 0.0,
+            "total_gate_count": 17439.666666666668,
+            "execution_time_seconds": 1.7964091000000433,
+            "success": 3
+        },
+        {
+            "processor": "Processor A",
+            "noise_mode": "Native Noise",
+            "qber": 0.011600088843037258,
+            "sifted_bits": 5029.333333333333,
+            "corrected_errors": 36.333333333333336,
+            "estimated_key_length": 3125.0,
+            "final_key_length": 256.0,
+            "batch_count": 2000.0,
+            "average_circuit_depth": 3.9356666666666666,
+            "one_qubit_gate_count": 17455.333333333332,
+            "two_qubit_gate_count": 0.0,
+            "total_gate_count": 17455.333333333332,
+            "execution_time_seconds": 1.7189063000002232,
+            "success": 3
+        },
+        {
+            "processor": "Processor B",
+            "noise_mode": "Controlled Noise",
+            "qber": 0.021892627782875363,
+            "sifted_bits": 5027.0,
+            "corrected_errors": 77.0,
+            "estimated_key_length": 2595.0,
+            "final_key_length": 256.0,
+            "batch_count": 1429.0,
+            "average_circuit_depth": 3.9892698857009563,
+            "one_qubit_gate_count": 17457.666666666668,
+            "two_qubit_gate_count": 0.0,
+            "total_gate_count": 17457.666666666668,
+            "execution_time_seconds": 1.3254716666669992,
+            "success": 3
+        },
+        {
+            "processor": "Processor B",
+            "noise_mode": "Native Noise",
+            "qber": 0.018231394354148844,
+            "sifted_bits": 5032.333333333333,
+            "corrected_errors": 86.33333333333333,
+            "estimated_key_length": 2761.0,
+            "final_key_length": 256.0,
+            "batch_count": 1429.0,
+            "average_circuit_depth": 3.9848378819687427,
+            "one_qubit_gate_count": 17360.666666666668,
+            "two_qubit_gate_count": 0.0,
+            "total_gate_count": 17360.666666666668,
+            "execution_time_seconds": 1.3576422666665167,
+            "success": 3
+        }
+    ],
+    "successful_trial_count": 12,
+    "failed_trial_count": 0,
+    "limitations": [
+        "Educational simulation; not production-certified QKD.",
+        "The reconciliation procedure is a simplified disclosure-based demonstration, not Cascade.",
+        "The final key length uses a heuristic estimate, not a finite-key or composable security proof.",
+        "The authentication PSK is generated locally for this demonstration.",
+        "The controlled noise model is synthetic.",
+        "Native noise results depend on the supplied processor noise models.",
+        "AES-256-GCM is classical encryption using a key derived from the simulated QKD process.",
+        "Independent single-qubit circuits do not provide a meaningful benchmark of multi-qubit connectivity."
+    ],
+    "generated_at_utc": "2026-10-11T10:01:03.137730+00:00"
+}
