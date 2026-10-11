@@ -1,10 +1,11 @@
 
 from qiskit import QuantumCircuit
+import random
 import secrets
 
 
 def generate_bb84_job(n_bits=300, rng=None):
-    """Generate the quantum circuits and random bases used in BB84."""
+    """Generate Alice's bits, their bases and the BB84 circuits."""
 
     if not isinstance(n_bits, int) or isinstance(n_bits, bool) or n_bits <= 0:
         raise ValueError("n_bits must be a positive integer.")
@@ -21,14 +22,14 @@ def generate_bb84_job(n_bits=300, rng=None):
     for i in range(n_bits):
         qc = QuantumCircuit(1, 1, name=f"bb84_bit_{i}")
 
-        # Alice encodes her bit in the selected basis.
+        # Alice prepares the state.
         if alice_bits[i] == 1:
             qc.x(0)
 
         if alice_bases[i] == 1:
             qc.h(0)
 
-        # Bob measures in his chosen basis.
+        # Bob selects his measurement basis.
         if bob_bases[i] == 1:
             qc.h(0)
 
@@ -38,9 +39,15 @@ def generate_bb84_job(n_bits=300, rng=None):
     return circuits, alice_bits, alice_bases, bob_bases
 
 
-def calculate_qber(alice_bits, alice_bases, bob_bases, bob_results,
-                   test_fraction=0.20, rng=None):
-    """Calculate QBER and return the remaining candidate keys."""
+def calculate_qber(
+    alice_bits,
+    alice_bases,
+    bob_bases,
+    bob_results,
+    test_fraction=0.20,
+    rng=None
+):
+    """Estimate QBER and return the candidate keys."""
 
     lengths = [
         len(alice_bits),
@@ -58,27 +65,34 @@ def calculate_qber(alice_bits, alice_bases, bob_bases, bob_results,
     if rng is None:
         rng = secrets.SystemRandom()
 
-    if any(bit not in (0, 1) for bit in alice_bits):
-        raise ValueError("Alice's bits must contain only 0 and 1.")
+    for bit in alice_bits:
+        if bit not in (0, 1):
+            raise ValueError("Alice's bits must contain only 0 and 1.")
 
-    if any(basis not in (0, 1) for basis in alice_bases + bob_bases):
-        raise ValueError("Basis values must contain only 0 and 1.")
+    for basis in alice_bases + bob_bases:
+        if basis not in (0, 1):
+            raise ValueError("Basis values must contain only 0 and 1.")
 
-    # Convert measurement results into bits.
-    bob_results = [
-        int(str(result).strip().replace(" ", ""))
-        for result in bob_results
-    ]
+    # Convert measurement results into binary values.
+    measured_bits = []
 
-    if any(bit not in (0, 1) for bit in bob_results):
-        raise ValueError("Measurement results must contain only 0 and 1.")
+    for result in bob_results:
+        value = str(result).strip().replace(" ", "")
 
-    # Keep only the bits where Alice and Bob used the same basis.
+        if value not in ("0", "1"):
+            raise ValueError(f"Invalid measurement result: {result}")
+
+        measured_bits.append(int(value))
+
+    # Keep only positions where both selected the same basis.
     alice_sifted = []
     bob_sifted = []
 
     for a_bit, a_basis, b_basis, b_bit in zip(
-        alice_bits, alice_bases, bob_bases, bob_results
+        alice_bits,
+        alice_bases,
+        bob_bases,
+        measured_bits
     ):
         if a_basis == b_basis:
             alice_sifted.append(a_bit)
@@ -87,13 +101,15 @@ def calculate_qber(alice_bits, alice_bases, bob_bases, bob_results,
     total_bits = len(alice_sifted)
 
     if total_bits < 2:
-        raise ValueError("Not enough sifted bits to calculate QBER.")
+        raise ValueError("Not enough sifted bits to estimate QBER.")
 
-    # Use a random sample to estimate the error rate.
+    # Randomly select bits for error estimation.
     test_size = max(1, round(total_bits * test_fraction))
     test_size = min(test_size, total_bits - 1)
 
-    test_indices = set(rng.sample(range(total_bits), test_size))
+    test_indices = set(
+        rng.sample(range(total_bits), test_size)
+    )
 
     errors = sum(
         alice_sifted[i] != bob_sifted[i]
@@ -102,7 +118,7 @@ def calculate_qber(alice_bits, alice_bases, bob_bases, bob_results,
 
     qber = errors / test_size
 
-    # Discard the bits used for testing.
+    # Remove the bits publicly used for testing.
     alice_key = [
         alice_sifted[i]
         for i in range(total_bits)
@@ -119,19 +135,23 @@ def calculate_qber(alice_bits, alice_bases, bob_bases, bob_results,
 
 
 def encrypt_message(message, key):
-    """Encrypt a message using XOR and a shared binary key."""
+    """Encrypt a UTF-8 message using a binary key."""
 
     if not isinstance(message, str):
         raise TypeError("Message must be a string.")
 
     message_bytes = message.encode("utf-8")
-    message_bits = ''.join(format(byte, '08b') for byte in message_bytes)
+
+    message_bits = ''.join(
+        format(byte, "08b")
+        for byte in message_bytes
+    )
 
     if any(bit not in (0, 1) for bit in key):
         raise ValueError("Key must contain only 0 and 1.")
 
     if len(key) < len(message_bits):
-        raise ValueError("Sifted key is too short. Increase n_bits.")
+        raise ValueError("Key is too short for this message.")
 
     ciphertext = [
         int(message_bits[i]) ^ key[i]
@@ -142,13 +162,13 @@ def encrypt_message(message, key):
 
 
 def decrypt_message(ciphertext, key, original_length):
-    """Decrypt the ciphertext using Bob's copy of the shared key."""
+    """Decrypt a message using Bob's copy of the key."""
 
     if not isinstance(original_length, int) or isinstance(original_length, bool):
         raise ValueError("Invalid message length.")
 
     if original_length < 0 or original_length % 8 != 0:
-        raise ValueError("Message length must be a non-negative multiple of 8.")
+        raise ValueError("Message length must be a multiple of 8.")
 
     if len(ciphertext) < original_length:
         raise ValueError("Ciphertext is too short.")
@@ -162,7 +182,6 @@ def decrypt_message(ciphertext, key, original_length):
     if any(bit not in (0, 1) for bit in key[:original_length]):
         raise ValueError("Key must contain only 0 and 1.")
 
-    # XOR reverses the encryption when both sides have the same key.
     decrypted_bits = [
         str(ciphertext[i] ^ key[i])
         for i in range(original_length)
