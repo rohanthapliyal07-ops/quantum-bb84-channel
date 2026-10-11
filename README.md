@@ -339,8 +339,8 @@ Because screenshots are nice, but reproducible data is nicer.
 ### Clone the repository
 
 ```bash
-git clone <YOUR_REPOSITORY_URL>
-cd Quantum-Secure-Channel
+git clone https://github.com/rohanthapliyal07-ops/quantum-bb84-channel.git
+cd quantum-bb84-channel
 ```
 
 ### Create a virtual environment
@@ -420,6 +420,10 @@ Processor A showed lower QBER in the native-noise experiment, while Processor B 
 No physical quantum computers were harmed in the making of this project.
 
 ---
+
+### Experimental Dashboard
+
+![Processor Comparison Dashboard](results/figures/processor_dashboard.png)
 
 ## 🤖 14. AI Assistance Disclosure
 
