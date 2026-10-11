@@ -1,0 +1,3 @@
+Processor,Mean QBER (%),QBER Standard Deviation (%),Average Candidate Key Length,Matching Key Trials
+Processor A,0.44476071873332146,0.3855847144937421,596,0
+Processor B,1.571346678978773,0.4198184110964988,596,0
