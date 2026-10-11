@@ -289,7 +289,8 @@ Quantum-Secure-Channel/
 ├── processors/
 │   ├── __init__.py
 │   └── hardware.py
-│
+├── src/
+│   └── qkd.py
 └── results/
     ├── security_report.json
     │
