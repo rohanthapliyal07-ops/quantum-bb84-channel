@@ -1,91 +1,278 @@
-# ⚛️ Quantum-Secured Communication Channel (BB84)
+# 🔐 Quantum Secure Communication Channel using BB84
 
-> *"Entangling qubits so you don't have to."*
+### Because sharing secrets is easy. Sharing them securely is the actual problem.
 
-Welcome to the **BB84 Quantum Key Distribution (QKD) Simulator**—a clean, modular Qiskit implementation that generates unhackable keys across simulated quantum hardware, detects eavesdroppers in real-time, and encrypts custom user messages with One-Time Pad (OTP) precision.
+Welcome to a little experiment where quantum mechanics meets cybersecurity, Alice has something to say to Bob, and Eve is politely advised to mind her own business.
 
----
+This project implements the **BB84 Quantum Key Distribution (QKD) protocol** using Python and Qiskit. It demonstrates how two parties can establish a shared secret key using quantum states, estimate transmission errors, and use the resulting key to encrypt and decrypt classical messages.
 
-## 🚀 Why This Exists
+We also throw two simulated quantum processors into the mix to see how their connectivity and noise characteristics affect quantum circuit execution.
 
-Classical encryption is living on borrowed time. When fault-tolerant quantum computers arrive, standard asymmetric algorithms like RSA and ECC will be as secure as a screen door on a submarine.
-
-This repository implements the **BB84 Protocol**, proving that quantum mechanics—specifically the No-Cloning Theorem and Heisenberg's Uncertainty Principle—is the ultimate cryptographic firewall.
-
-### 💡 Key Features
-
-* **⚛️ Core BB84 Circuit Engine**: Modular state preparation ($|0\rangle, |1\rangle, |+\rangle, |-\rangle$), basis choice matching, and measurement in Qiskit.
-* **⚡ Hardware Noise Simulation**: Realistic noise modeling using `Qiskit Aer` to evaluate Quantum Bit Error Rate ($\text{QBER}$) across simulated processors.
-* **📊 Automated Analytics**: Dynamic calculation and automated reporting of $\text{QBER}$ and sifted key lengths directly to CSV tables and Matplotlib plots.
-* **🔒 Interactive OTP Encryption**: Real-time user input conversion to binary, One-Time Pad (XOR) encryption using the generated quantum key, and flawless receiver decryption.
+**Spoiler:** Having more qubits doesn't automatically make you better. Just like having more RAM doesn't make you a better programmer.
 
 ---
 
-## 🛠️ Repository Architecture
+## 🧠 What Are We Actually Building?
+
+Imagine Alice wants to send Bob a secret message.
+
+The internet is full of curious people. Eve is one of them.
+
+Instead of directly sending Bob the encryption key, Alice and Bob use the BB84 protocol to generate a shared secret key through quantum communication.
+
+The interesting part?
+
+If someone tries to observe a quantum state in the wrong basis, quantum measurement can introduce detectable errors.
+
+In other words, quantum mechanics gives us a way to detect certain kinds of eavesdropping.
+
+**Our mission:** Simulate this process, measure the errors, and investigate how different processor architectures perform.
+
+---
+
+## ⚛️ The BB84 Protocol
+
+Proposed by Charles Bennett and Gilles Brassard in 1984, BB84 is one of the foundational protocols in quantum cryptography.
+
+Here's how our implementation works:
+
+1. **Alice gets random:** Generates random binary bits and randomly selects Z or X bases.
+2. **Qubit preparation:** Alice encodes her bits using quantum gates.
+3. **Bob makes his choices:** Bob independently selects measurement bases.
+4. **Measurement time:** Bob measures the received qubits.
+5. **Basis reconciliation:** Alice and Bob compare their basis choices. Matching bases survive; mismatches get discarded.
+6. **QBER estimation:** They reveal a random sample of matching bits to estimate the error rate. Those test bits are discarded.
+7. **Candidate key generation:** The remaining bits become candidate shared keys.
+
+The error metric:
+
+\[
+QBER = \frac{\text{Errors in test bits}}{\text{Total test bits}}
+\]
+
+A lower QBER generally indicates better agreement between Alice's and Bob's measurements.
+
+Eve, meanwhile, has made the situation considerably more complicated.
+
+---
+
+## 🖥️ Meet the Processors
+
+We created two synthetic quantum processor configurations. Different qubit counts, different connectivity, different noise profiles.
+
+Basically, a quantum computing face-off.
+
+| Specification | Processor A | Processor B |
+|---|---:|---:|
+| Qubits | 5 | 7 |
+| Connectivity | Centralised | Chain with branches |
+| Single-qubit error | 0.0005 | 0.001 |
+| Two-qubit error | 0.005 | 0.01 |
+| Readout error | 1% | 2% |
+
+Both processors use Qiskit's `GenericBackendV2` and Qiskit Aer for simulation.
+
+**Important:** These are simulated configurations, not real quantum computers. No actual quantum hardware was harmed during this experiment.
+
+---
+
+## 🔬 Two Experiments, One Repository
+
+### 1. BB84 Quantum Key Distribution
+
+Our main experiment.
+
+We simulate 1,500 qubits per trial and perform three trials on each processor configuration.
+
+We investigate:
+
+- QBER.
+- Sifted and candidate key lengths.
+- Agreement between Alice's and Bob's candidate keys.
+- Circuit depth.
+- Gate count.
+- Experiment execution time.
+
+### 2. GHZ-Based Architecture Benchmark
+
+Here's where processor connectivity gets its own spotlight.
+
+Since our BB84 circuits operate on individual qubits, they don't meaningfully exercise multi-qubit connectivity.
+
+So we introduce a separate five-qubit GHZ-state experiment.
+
+We compare:
+
+- Transpiled circuit depth.
+- Total gate count.
+- CX gate count.
+- SWAP gate count.
+- Frequency of expected correlated GHZ measurement outcomes.
+
+Why GHZ?
+
+Because sometimes you need to bring multiple qubits together to see what a processor is really capable of.
+
+---
+
+## 💬 Alice Has Something to Say
+
+The project also includes an interactive message transmission demonstration.
+
+Alice enters a message. The BB84 protocol generates candidate keys. If the keys match and are long enough, the message is encrypted using XOR.
+
+\[
+C = M \oplus K
+\]
+
+Bob then decrypts it:
+
+\[
+M = C \oplus K
+\]
+
+The message is converted from UTF-8 text into binary before encryption.
+
+No mysterious black box. Just bits, quantum circuits and a little bit of XOR magic.
+
+---
+
+## 📊 What Does the Project Generate?
+
+Our experiments automatically produce results.
+
+| File | Purpose |
+|---|---|
+| `metrics.csv` | Individual BB84 trial results |
+| `summary.csv` | Processor performance summary |
+| `architecture_metrics.csv` | GHZ architecture benchmark |
+| `qber_comparison.png` | QBER comparison graph |
+| `architecture_comparison.png` | CX gate count comparison |
+
+Graphs and CSVs are stored in the `results/` directory.
+
+---
+
+## 🗂️ Project Structure
 
 ```text
 quantum-bb84-channel/
 │
 ├── processors/
 │   ├── __init__.py
-│   └── hardware.py       # Quantum noise backend configurations
+│   └── hardware.py
 │
 ├── results/
-│   ├── figures/          # Exported QBER comparative plots
-│   └── tables/           # Metric output CSVs
+│   ├── figures/
+│   │   ├── qber_comparison.png
+│   │   └── architecture_comparison.png
+│   │
+│   └── tables/
+│       ├── metrics.csv
+│       ├── summary.csv
+│       └── architecture_metrics.csv
 │
 ├── src/
-│   ├── __init__.py
-│   └── qkd.py            # Core BB84 state prep & basis matching logic
+│   └── qkd.py
 │
-├── main.ipynb            # Interactive execution notebook & live OTP demo
-├── requirements.txt      # Dependency manifest
-└── README.md             # Project documentation
+├── main.ipynb
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
-## ⚡ Quickstart
+## ⚙️ Getting Started
 
-### 1. Clone & Install
+Want to run it yourself? Excellent. Curiosity is a good habit.
+
+### 1. Clone the repository
+
 ```bash
 git clone https://github.com/rohanthapliyal07-ops/quantum-bb84-channel.git
+```
+
+### 2. Enter the project directory
+
+```bash
 cd quantum-bb84-channel
+```
+
+### 3. Create a virtual environment
+
+```bash
+python -m venv .venv
+```
+
+### 4. Activate it (Windows)
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+### 5. Install dependencies
+
+```bash
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 2. Run the Engine
-Open `main.ipynb` in VS Code or Jupyter Notebook:
-1. **Run All Cells** to simulate qubit transmission across noisy vs. ideal backends.
-2. Enter your secret message into the interactive cell at the bottom to watch the One-Time Pad encrypt and decrypt your text in real-time!
+### 6. Launch Jupyter
+
+```bash
+jupyter notebook
+```
+
+Open `main.ipynb`, run the experiment and let the qubits do their thing.
 
 ---
 
-## 📊 Live Metrics & Quantum Realism
+## 🛠️ Tech Stack
 
-Because quantum measurement is fundamentally probabilistic, run metrics vary dynamically across executions. Noise simulation models real-world decoherence, giving authentic hardware results:
-
-| Processor | QBER (%) | Sifted Key Length (bits) |
-| :--- | :--- | :--- |
-| **Processor A (Noisy)** | `~0.135%` | `~740` |
-| **Processor B (Ideal)** | `0.000%` | `~740` |
-
----
-
-## 🛡️ Eavesdropper Detection Rule
-
-If an eavesdropper (Eve) attempts an intercept-resend attack on the channel, state collapse immediately spikes the error rate:
-
-$$\text{QBER} > 11\% \implies \text{ABORT KEY (Eve Intercepted!)} \quad 🚨$$
+- **Python** – The brains behind the operation.
+- **Qiskit** – Building and transpiling quantum circuits.
+- **Qiskit Aer** – Simulating quantum computers and noise.
+- **Pandas** – Making experimental data manageable.
+- **Matplotlib** – Turning numbers into graphs.
+- **Jupyter Notebook** – Where all the experiments come together.
 
 ---
 
-## 🧰 Tech Stack
+## 🚧 Current Limitations & Future Work
 
-* **Quantum Backend**: `qiskit>=1.0.0`, `qiskit-aer>=0.14.0`
-* **Data & Analytics**: `pandas`, `matplotlib`
-* **Environment**: Jupyter Notebook / VS Code
+Let's be honest: a simulation is not a magical security certificate.
+
+Our current implementation is an educational demonstration, not a production-ready QKD system.
+
+Future improvements:
+
+- Simulating Eve's interception and measurement attacks.
+- Implementing error correction.
+- Adding privacy amplification.
+- Authenticating the classical communication channel.
+- Studying QBER under different noise conditions.
+- Exploring finite-key security.
+- Building a graphical interface for Alice and Bob.
+- Extending processor architecture comparisons.
+
+Also, XOR encryption alone doesn't magically make something a secure One-Time Pad. That requires a truly random, secret, sufficiently long key that is never reused.
+
+We're here to learn quantum security, not accidentally invent quantum insecurity.
 
 ---
 
-*Built with ⚛️ for the hackathon. Remember: If someone measures your qubits early, tell them to stop observing your boundaries.*
+## 🎯 The Bigger Picture
+
+This project explores the intersection of quantum computing and cybersecurity.
+
+It aims to demonstrate how quantum mechanics can support secure key distribution and how processor architecture and noise influence simulated quantum circuit behaviour.
+
+Because the future of cybersecurity might be quantum.
+
+And Eve probably isn't going anywhere.
+
+---
+
+**Built with Python, Qiskit, and an unreasonable number of qubits.**
+
+*Alice sends. Bob measures. Eve regrets asking.* 🔐
