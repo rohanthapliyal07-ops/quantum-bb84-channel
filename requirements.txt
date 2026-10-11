@@ -1,16 +1,6 @@
-# ========================================================
-# ⚛️ QUANTUM SECURE COMMUNICATION CHANNEL (BB84)
-# "Entangling qubits so you don't have to."
-# ========================================================
-
-# Core Quantum Stack (Don't measure these early!)
-qiskit>=1.0.0            # Key generation & quantum circuit algebra
-qiskit-aer>=0.14.0        # Realistic hardware noise simulation
-
-# Classical Crunchers & Visuals
-pandas>=2.0.0            # Making key stats tabular & tidy
-matplotlib>=3.8.0        # Plotting QBER so judges love us
-
-# Notebook & Environment Essentials
-jupyter>=1.0.0           # Interactive cell magic
-ipykernel>=6.0.0         # Keeping the Python kernel happy
+qiskit>=1.0.0
+qiskit-aer>=0.14.0
+pandas>=2.0.0
+matplotlib>=3.8.0
+jupyter>=1.0.0
+ipykernel>=6.0.0
