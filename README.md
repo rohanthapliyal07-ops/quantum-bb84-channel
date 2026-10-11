@@ -251,6 +251,11 @@ Original message and receiver's decrypted message matched for both processors.
 - **2/2** successful message deliveries.
 - **256 bits** of final encryption key for each successful message session.
 
+### Experimental Dashboard
+
+![Processor Comparison Dashboard](results/figures/processor_dashboard.png)
+
+
 ### What did we learn?
 
 **Processor A:** Lower QBER in the native-noise comparison and in the message transmission run.
@@ -421,9 +426,6 @@ No physical quantum computers were harmed in the making of this project.
 
 ---
 
-### Experimental Dashboard
-
-![Processor Comparison Dashboard](results/figures/processor_dashboard.png)
 
 ## 🤖 14. AI Assistance Disclosure
 
